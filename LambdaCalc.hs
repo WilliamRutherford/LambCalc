@@ -32,9 +32,10 @@ module LambdaCalc where
            | x == false = "false"
            | otherwise  = showExpr x
 
+{- WIP in Parse branch
     instance Read Expr where
         read x 
-
+-}
 
     showExpr :: Expr -> String
     showExpr (Var x)   = x

@@ -23,6 +23,10 @@ module LambdaBoolean where
     -- not
     not = apply (Lambda "_" (App (App (Var "_") false) true)) 
 
+    -- lp x y -> p (x) (y)
+    -- if/then/else
+    ifelse p x y = if (p == true) then x else y
+
     -- lx y. x x y
     -- or
     or x y =  apply (apply (Lambda "_x" (Lambda "_y" (App (App (Var "_x") (Var "_x")) (Var "_y")))) x) y
@@ -35,3 +39,4 @@ module LambdaBoolean where
     --lx y. x (not y) y
     --xor
     xor x y = apply (apply (Lambda "_x" (Lambda "_y" (App (App (Var "_x") (not (Var "_y"))) (Var "_y")))) x) y
+
