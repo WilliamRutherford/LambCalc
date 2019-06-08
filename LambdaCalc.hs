@@ -31,10 +31,10 @@ module LambdaCalc where
            | x == true  = "true"
            | x == false = "false"
            | otherwise  = showExpr x
-
+{-
     instance Read Expr where
-        read x 
-
+        read x = error "printing doesn't currently work this way"
+-}
 
     showExpr :: Expr -> String
     showExpr (Var x)   = x
