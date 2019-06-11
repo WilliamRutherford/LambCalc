@@ -32,9 +32,9 @@ module LambdaCalc where
            | x == false = "false"
            | otherwise  = showExpr x
 
-{- WIP in Parse branch
+{-
     instance Read Expr where
-        read x 
+        read x = error "printing doesn't currently work this way"
 -}
 
     showExpr :: Expr -> String
