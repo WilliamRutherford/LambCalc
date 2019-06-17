@@ -1,8 +1,8 @@
-module LambdaNumber where
+module LambdaNum where
 
     import LambdaCalc hiding (n0, n1)
     import Prelude hiding (exp, succ)
-
+    import PredSucc
 
     n0 :: Expr -- \f x -> x
     n1 :: Expr -- \f x -> f x
@@ -30,10 +30,6 @@ module LambdaNumber where
     -- isZero: (\x -> x (\y -> false) true
     isZero :: Expr -> Expr
     isZero = apply (Lambda "_x0" (App (App (Var "_x0") (Lambda "_y0" false)) true))
-
-    -- SUCC := (\n f x -> f (n f x))
-    succ :: Expr -> Expr -> Expr -> Expr
-    succ n f x = applyh (applyh (applyh (Lambda "ns" (Lambda "fs" (Lambda "xs" (App (Var "fs") (App (App (Var "ns") (Var "fs")) (Var "xs")))))) x) f) n 
 
     -- n : \f x -> f ... f x
     -- m : \f x -> f ... f x

@@ -1,15 +1,9 @@
 module LambdaCalc where
-
+    
+    import LambdaParse   
+    import LambdaExpr
     import Data.List
     --import Data.Hash
-
-    type Name = String
-
-
-    data Expr = Var    (Name)
-              | App    (Expr) (Expr)
-              | Lambda (Name) (Expr)
-              deriving (Eq)
 
     --constants types
     true :: Expr
@@ -32,10 +26,6 @@ module LambdaCalc where
            | x == false = "false"
            | otherwise  = showExpr x
 
-{-
-    instance Read Expr where
-        read x = error "printing doesn't currently work this way"
--}
 
     showExpr :: Expr -> String
     showExpr (Var x)   = x
@@ -69,7 +59,10 @@ module LambdaCalc where
     --x, y :: Expr
     --(\a b ->) :: a -> b -> b (b is Expr)
 
-
+    mapply :: Expr -> [Expr] -> Expr
+    mapply x []     = x
+    mapply x (y:[]) = applyh x y
+    mapply x (y:ys) = mapply (applyh x y) ys 
 
     applyh :: Expr -> Expr -> Expr
     applyh (Var a) y      = App (Var a) y

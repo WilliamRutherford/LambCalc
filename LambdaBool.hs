@@ -1,5 +1,6 @@
 module LambdaBool where
 
+    import LambdaExpr
     import LambdaCalc hiding (true, false)
     import Prelude hiding (not, or, and)
 

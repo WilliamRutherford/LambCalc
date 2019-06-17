@@ -1,7 +1,8 @@
 module LambdaParse where
     
-    import LambdaCalc
+    import LambdaExpr
     import ParserLib
+    
     import Control.Applicative
     import Data.Char
     import Data.Functor

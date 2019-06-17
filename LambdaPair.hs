@@ -2,9 +2,15 @@ module LambdaPair where
 
     import Prelude hiding (fst, snd)
 
+    import LambdaExpr
     import LambdaCalc hiding (true,  false)
     import LambdaBool
 
+    nil :: Expr
+    nil  = (Lambda "n" (true))
+    null :: Expr
+    null = (Lambda "p" (App (Var "p") (Lambda "xn" (Lambda "yn" false))))
+    
     --pair (l x y f -> f x y)
     pair :: Expr -> Expr -> Expr
     pair x y = (Lambda "f" (App (App (Var "f") x ) y))
@@ -16,4 +22,4 @@ module LambdaPair where
     --second (l p -> p FALSE)
     snd :: Expr -> Expr
     snd p = apply p (false)
-    
+
