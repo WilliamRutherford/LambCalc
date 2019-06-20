@@ -1,6 +1,6 @@
 module LambdaCalc where
     
-    import LambdaParse   
+    --import LambdaParse   
     import LambdaExpr
     import Data.List
     --import Data.Hash

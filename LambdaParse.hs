@@ -1,6 +1,7 @@
 module LambdaParse where
     
     import LambdaExpr
+    import LambdaNum (convert)
     import ParserLib
     
     import Control.Applicative
@@ -27,7 +28,7 @@ module LambdaParse where
         return t
 
     expr :: Parser Expr
-    expr = var <|> bexprs <|> lambda <* whitespaces
+    expr = int <|> var <|> bexprs <|> lambda <* whitespaces
 
     bexprs :: Parser Expr
     bexprs = do
@@ -66,6 +67,8 @@ module LambdaParse where
         whitespaces
         return (Var (x:xs))
 
+    int :: Parser Expr
+    int = convert <$> read <$> some (satisfy isDigit) <* whitespaces
 
     lambda ::  Parser Expr
     lambda = do

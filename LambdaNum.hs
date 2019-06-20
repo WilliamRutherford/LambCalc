@@ -1,6 +1,7 @@
 module LambdaNum where
 
-    import LambdaCalc hiding (n0, n1)
+    import LambdaExpr
+    import LambdaCalc (apply, true, false)
     import Prelude hiding (exp, succ)
     import PredSucc
 
@@ -20,12 +21,12 @@ module LambdaNum where
     convertHelp x = App (Var "f") (convertHelp (x-1))
 
     toNum :: Expr -> Int
-    toNum (Lambda _ (Lambda _ x)) = toNumHelper x
+    toNum (Lambda a (Lambda _ x)) = toNumHelper x a
 
-    toNumHelper :: Expr -> Int
-    toNumHelper (Var _) = 0
-    toNumHelper (Lambda _ x) = (toNumHelper x) - 1
-    toNumHelper _ = error "not a number"
+    toNumHelper :: Expr -> Name -> Int
+    toNumHelper (Var _) a   = 0
+    toNumHelper (App (Var a) x) b = if (a == b) then (toNumHelper x b) + 1 else error "incorrect function"
+    toNumHelper _ _         = error "not a number"
 
     -- isZero: (\x -> x (\y -> false) true
     isZero :: Expr -> Expr

@@ -3,7 +3,7 @@ module PredSucc where
     import Prelude hiding (fst, snd, succ)
     import LambdaCalc
     import LambdaExpr
-    import LambdaParse
+    --import LambdaParse
     import LambdaPair
 
     -- (\n f x -> f (n f x))
@@ -18,5 +18,5 @@ module PredSucc where
 
 
     -- λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)
-    predf :: Expr
-    predf = parse "(l n f x -> n (l g h -> h (g f)) (l u -> x) (l u -> u))"
+--    predf :: Expr
+--  predf = parse "(l n f x -> n (l g h -> h (g f)) (l u -> x) (l u -> u))"
