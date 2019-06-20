@@ -4,7 +4,8 @@ module LambdaParse where
     import LambdaNum (convert)
     import ParserLib
     import LambdaPair
-    
+    import LambdaArr
+
     import Control.Applicative
     import Data.Char
     import Data.Functor
@@ -29,7 +30,7 @@ module LambdaParse where
         return t
 
     expr :: Parser Expr
-    expr = int <|> var <|> lpair <|> bexprs <|> lambda <* whitespaces
+    expr = int <|> var <|> lpair <|> larr <|> emptyArr <|> bexprs <|> lambda <* whitespaces
 
     bexprs :: Parser Expr
     bexprs = do
@@ -61,7 +62,21 @@ module LambdaParse where
         whitespaces
         return (pair x y)
 
-
+    emptyArr :: Parser Expr
+    emptyArr = do
+        a <- string "[]" 
+        b <- whitespaces
+        return nil
+    
+    larr :: Parser Expr
+    larr = do
+        char '['
+        whitespaces
+        x  <- expr
+        xs <- many (char ',' *> whitespaces *> expr)
+        char ']'
+        return (arr (x:xs))
+    
     vars :: Parser [Name]
     vars = some varn
 
