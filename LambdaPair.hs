@@ -3,7 +3,7 @@ module LambdaPair where
     import Prelude hiding (fst, snd)
 
     import LambdaExpr
-    import LambdaCalc hiding (true,  false)
+    import LambdaCalc hiding (true,  false, nil, null)
     import LambdaBool
 
     --pair (l x y f -> f x y)

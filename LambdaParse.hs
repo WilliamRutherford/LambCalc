@@ -1,15 +1,17 @@
 module LambdaParse where
     
+    import Prelude hiding (null)
+
     import LambdaExpr
     import LambdaNum (convert)
     import ParserLib
     import LambdaPair
-    import LambdaArr
+    import LambdaArr 
 
     import Control.Applicative
     import Data.Char
     import Data.Functor
-    import Data.List
+    import Data.List hiding (nil, null)
 
     --currently, "(a (b c))" works but "((b c) d)" does not
 

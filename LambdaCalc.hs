@@ -2,7 +2,7 @@ module LambdaCalc where
     
     --import LambdaParse   
     import LambdaExpr
-    import Data.List
+    import Data.List hiding (nil, null)
     --import Data.Hash
 
     --constants types
@@ -15,6 +15,8 @@ module LambdaCalc where
     true  = Lambda "_xt" (Lambda "_yt" (Var "_xt"))
     false = Lambda "_xf" (Lambda "_yf" (Var "_yf"))
 
+    nil = Lambda "__n" (true) 
+
     n0 = Lambda "f" (Lambda "x" (Var "x"))
     n1 = Lambda "f" (Lambda "x" (App (Var "f") (Var "x")))
 
@@ -24,8 +26,11 @@ module LambdaCalc where
         show x
            | x == true  = "true"
            | x == false = "false"
+           | x == nil   = "[]"
            | otherwise  = showExpr x
 
+    showArr :: Expr -> String
+    showArr x = "?" 
 
     showExpr :: Expr -> String
     showExpr (Var x)   = x

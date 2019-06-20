@@ -1,6 +1,6 @@
 module LambdaArr where
 
-    import LambdaCalc
+    import LambdaCalc hiding (nil, null)
     import LambdaExpr
     import LambdaPair
 
