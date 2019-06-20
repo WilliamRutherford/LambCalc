@@ -3,6 +3,7 @@ module LambdaParse where
     import LambdaExpr
     import LambdaNum (convert)
     import ParserLib
+    import LambdaPair
     
     import Control.Applicative
     import Data.Char
@@ -28,7 +29,7 @@ module LambdaParse where
         return t
 
     expr :: Parser Expr
-    expr = int <|> var <|> bexprs <|> lambda <* whitespaces
+    expr = int <|> var <|> lpair <|> bexprs <|> lambda <* whitespaces
 
     bexprs :: Parser Expr
     bexprs = do
@@ -47,6 +48,19 @@ module LambdaParse where
     expandExprs :: [Expr] -> Expr
     expandExprs (x:[])     = x
     expandExprs x = foldl1 (App) x
+
+    lpair :: Parser Expr
+    lpair = do
+        char '('
+        whitespaces
+        x <- expr
+        char ','
+        whitespaces
+        y <- expr
+        char ')'
+        whitespaces
+        return (pair x y)
+
 
     vars :: Parser [Name]
     vars = some varn
