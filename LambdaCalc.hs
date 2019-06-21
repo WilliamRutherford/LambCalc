@@ -27,10 +27,22 @@ module LambdaCalc where
            | x == true  = "true"
            | x == false = "false"
            | x == nil   = "[]"
+           | isPair x   = printPair x
            | otherwise  = showExpr x
 
-    showArr :: Expr -> String
-    showArr x = "?" 
+    {-  pairs have the form:
+        (lf. f a b) 
+    -}
+    isPair :: Expr -> Bool
+    isPair (Lambda a (App (App (Var b) _) _)) = (a == b)
+    isPair _ = False
+
+    printPair :: Expr -> String
+    printPair (Lambda _ (App (App _ a) b)) = if isPair b then "[" ++ printArr a b ++ "]" else "("++show a ++", " ++ show b ++ ")"
+
+    printArr :: Expr -> Expr -> String
+    printArr a b = if b == nil then show a else show a ++ "," ++ printArr (applyh b true) (applyh b false)
+        
 
     showExpr :: Expr -> String
     showExpr (Var x)   = x
