@@ -71,7 +71,7 @@ module LambdaCalc where
 
     --makes sure that lambda variables don't overlap
     apply :: Expr -> Expr -> Expr
-    apply x y = applyh x (if overlapped == [] then y else foldr (\a b -> sub b a (Var ("_"++a))) y overlapped)
+    apply x y = applyh x (if overlapped == [] then y else foldr (\a b -> subName b a (a++"_")) y overlapped)
         where overlapped = overlap x y
     --x, y :: Expr
     --(\a b ->) :: a -> b -> b (b is Expr)
@@ -90,6 +90,11 @@ module LambdaCalc where
     sub (Var a)      q r = if a == q then r else Var a
     sub (Lambda a x) q r = if a /= q then Lambda a (sub x q r) else (Lambda a x)--else error "trying to replace lambda var"
     sub (App x y)    q r = apply (sub x q r) (sub y q r) 
+
+    subName :: Expr -> Name -> Name -> Expr
+    subName (Var a)      q r = Var (if a == q then r else a)
+    subName (Lambda a x) q r = Lambda (if a == q then r else a) (subName x q r)
+    subName (App x y)    q r = App (subName x q r) (subName y q r)
 
     overlap :: Expr -> Expr -> [Name]
     overlap x y = filter (\a -> a `elem`listVars y) (listVars x)

@@ -36,5 +36,6 @@ module LambdaNum where
     -- m : \f x -> f ... f x
     -- POW := \n m -> m n
     exp :: Expr -> Expr -> Expr
-    exp n m = apply (apply (Lambda "__n__" (Lambda "__m__" (App (Var "__m__") (Var "__n__")))) m) n
+    exp n m = apply (apply (Lambda "__n" (Lambda "__m" (App (Var "__m") (Var "__n")))) n) m
+
     
