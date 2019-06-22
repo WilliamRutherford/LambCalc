@@ -107,7 +107,7 @@ module LambdaParse where
         lambdaSym
         whitespaces
         x <- vars
-        string "->"
+        (string "->" <|> string ".")
         whitespaces
         y <- exprs
         string ")"
