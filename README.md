@@ -17,7 +17,8 @@ Lamba terms are written using a starting character, a divider, then another term
 
 ### Booleans
 true  := (lx y. x)
-  false := (lx y. y)
+    
+false := (lx y. y)
 
 ### Pairs
 pairs can be written like (a, b)
