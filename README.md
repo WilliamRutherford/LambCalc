@@ -4,7 +4,7 @@
 
 This is a interpreter for Lambda Calculus built using Haskell.
 
-##Basics
+## Basics
 
 ### Lambdas
 Lamba terms are written using a starting character, a divider, then another term.
