@@ -5,4 +5,4 @@ module LambdaExpr where
     data Expr = Var    (Name)
               | App    (Expr) (Expr)
               | Lambda (Name) (Expr)
-              deriving (Eq)
+             
