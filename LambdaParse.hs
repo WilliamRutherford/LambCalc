@@ -121,3 +121,10 @@ module LambdaParse where
     lambdaSym :: Parser String
     lambdaSym = string "l" <|> string "\\"
 
+    define :: Parser (Name, Expr)
+    define = do
+        x <- varn
+        string ":="
+        y <- expr
+        return (x, y)
+

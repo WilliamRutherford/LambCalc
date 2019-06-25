@@ -20,11 +20,20 @@ module LambdaNum where
     convertHelp 0 = (Var "x")
     convertHelp x = App (Var "f") (convertHelp (x-1))
 
+    isNum :: Expr -> Bool
+    isNum (Lambda a (Lambda b x)) = isNumHelper x a b
+    isNum _ = False
+
+    isNumHelper :: Expr -> Name -> Name -> Bool
+    isNumHelper (App (Var x) y) a b = if x == a then isNumHelper y a b else False
+    isNumHelper (Var y)         a b = if y == b then True              else False
+    isNumHelper _               a b = False
+
     toNum :: Expr -> Int
     toNum (Lambda a (Lambda _ x)) = toNumHelper x a
 
     toNumHelper :: Expr -> Name -> Int
-    toNumHelper (Var _) a   = 0
+    toNumHelper (Var _) a   = 0 
     toNumHelper (App (Var a) x) b = if (a == b) then (toNumHelper x b) + 1 else error "incorrect function"
     toNumHelper _ _         = error "not a number"
 

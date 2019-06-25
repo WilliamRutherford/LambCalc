@@ -22,48 +22,6 @@ module LambdaCalc where
 
     id = Lambda "__x__" (Var "__x__")
 
-    instance Show Expr where
-        show x
-           | x == true  = "true"
-           | x == false = "false"
-           | x == nil   = "[]"
-           | isPair x   = printPair x
-           | otherwise  = showExpr x
-
-    {-  pairs have the form:
-        (lf. f a b) 
-    -}
-    isPair :: Expr -> Bool
-    isPair (Lambda a (App (App (Var b) _) _)) = (a == b)
-    isPair _ = False
-
-    printPair :: Expr -> String
-    printPair (Lambda _ (App (App _ a) b)) = if isPair b then "[" ++ printArr a b ++ "]" else "("++show a ++", " ++ show b ++ ")"
-
-    printArr :: Expr -> Expr -> String
-    printArr a b = if b == nil then show a else show a ++ "," ++ printArr (applyh b true) (applyh b false)
-        
-
-    showExpr :: Expr -> String
-    showExpr (Var x)   = x
-    showExpr (App x y) = "("++ (showExpr x) ++ ") (" ++ (showExpr y) ++ ")"
-    showExpr (x)       = "(l" ++ writeVars (showVars x) ++". " ++ (writeBody x)++ ")"
-
-    showVars :: Expr -> [Name]
-    showVars (Lambda x y) = (x:(showVars y))
-    showVars (App (Lambda x y) _) = x:(showVars y)
-    showVars (x) = []
-
-    writeVars :: [Name] -> String
-    writeVars []     = ""
-    writeVars (x:[]) = x
-    writeVars (x:xs) = x ++ " " ++ (writeVars xs)
-
-    writeBody :: Expr -> String
-    writeBody (Var x)      = x
-    writeBody (App x y)    = showExpr x ++ " " ++ showExpr y
-    writeBody (Lambda x y) = writeBody y
-
     treeView :: Expr -> String
     treeView (Var a) = "(V " ++ a ++ ")"
     treeView (App x y) = "(A " ++ treeView x ++ " " ++ treeView y ++ ")"
