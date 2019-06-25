@@ -18,3 +18,4 @@ module LambdaEq where
     equalContext (Var a) (Var b) c           = (c ! a) == b 
     equalContext (App a b) (App x y) c       = (equalContext a x c) && (equalContext b y c)
     equalContext (Lambda a x) (Lambda b y) c = equalContext x y (insert a b c)
+    equalContext _ _ _ = False

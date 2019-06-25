@@ -47,7 +47,7 @@ module LambdaCalc where
     sub :: Expr -> Name -> Expr -> Expr
     sub (Var a)      q r = if a == q then r else Var a
     sub (Lambda a x) q r = if a /= q then Lambda a (sub x q r) else (Lambda a x)--else error "trying to replace lambda var"
-    sub (App x y)    q r = apply (sub x q r) (sub y q r) 
+    sub (App x y)    q r = applyh (sub x q r) (sub y q r) 
 
     subName :: Expr -> Name -> Name -> Expr
     subName (Var a)      q r = Var (if a == q then r else a)

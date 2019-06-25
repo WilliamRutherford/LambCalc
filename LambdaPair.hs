@@ -8,13 +8,13 @@ module LambdaPair where
 
     --pair (l x y f -> f x y)
     pair :: Expr -> Expr -> Expr
-    pair x y = (Lambda "f" (App (App (Var "f") x ) y))
+    pair x y = (Lambda "pair" (App (App (Var "pair") x ) y))
 
     --first (l p  -> p TRUE)
     fst :: Expr -> Expr
-    fst p = apply p (true)
+    fst p = applyh p (true)
 
     --second (l p -> p FALSE)
     snd :: Expr -> Expr
-    snd p = apply p (false)
+    snd p = applyh p (false)
 
