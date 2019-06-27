@@ -13,3 +13,8 @@ module LambdaArr where
     arr :: [Expr] -> Expr
     arr []     = nil
     arr (x:xs) = pair x (arr xs)
+    
+    --   l array-> func -> result
+    map :: Expr -> Expr -> Expr
+    map f [] = []
+    map f x  = pair (applyh f (fst x)) (map f (snd x))  

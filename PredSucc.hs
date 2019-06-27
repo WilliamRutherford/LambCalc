@@ -11,7 +11,7 @@ module PredSucc where
     succ n f x = apply (apply (apply (App (Var "fs") (App (App (Var "ns") (Var "fs")) (Var "xs"))) n) f) x
 
     succf :: Expr
-    succf = (App (Var "fs") (App (App (Var "ns") (Var "fs")) (Var "xs")))
+    succf = (Lambda "ns" (Lambda "fs" (Lambda "xs" (App (Var "fs") (App (App (Var "ns") (Var "fs")) (Var "xs"))))))
 
     phi :: Expr -> Expr
     phi = apply (Lambda "xp" (pair (snd (Var "xp")) (applyh succf (snd (Var "xp")))))

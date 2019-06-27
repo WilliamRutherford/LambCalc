@@ -1,7 +1,7 @@
 module LambdaNum where
 
     import LambdaExpr
-    import LambdaCalc (apply, true, false)
+    import LambdaCalc (apply, mapply, true, false)
     import Prelude hiding (exp, succ)
     import PredSucc
 
@@ -45,6 +45,6 @@ module LambdaNum where
     -- m : \f x -> f ... f x
     -- POW := \n m -> m n
     exp :: Expr -> Expr -> Expr
-    exp n m = apply (apply (Lambda "__n" (Lambda "__m" (App (Var "__m") (Var "__n")))) n) m
+    exp n m = mapply (Lambda "__n" (Lambda "__m" (App (Var "__m") (Var "__n")))) [n,m]
 
     
