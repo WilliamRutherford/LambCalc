@@ -1,5 +1,6 @@
 module LambdaArr where
 
+    import Prelude hiding (fst, snd, map)
     import LambdaCalc hiding (nil, null)
     import LambdaExpr
     import LambdaPair
@@ -16,5 +17,6 @@ module LambdaArr where
     
     --   l array-> func -> result
     map :: Expr -> Expr -> Expr
-    map f [] = []
-    map f x  = pair (applyh f (fst x)) (map f (snd x))  
+    map f x  
+        | x == nil  = nil
+        | otherwise = pair (applyh f (fst x)) (map f (snd x))  

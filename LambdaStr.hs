@@ -1,7 +1,7 @@
 module LambdaStr where
     
     import LambdaExpr
-    import LambdaArr
+    import LambdaArr hiding (map)
     import LambdaNum
 
     import Data.Char (ord)
