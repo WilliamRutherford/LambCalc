@@ -6,14 +6,26 @@ module LambdaParse where
     import LambdaNum (convert)
     import ParserLib
     import LambdaPair
-    import LambdaArr 
+    import LambdaArr hiding (map)
 
     import Control.Applicative
     import Data.Char
     import Data.Functor
     import Data.List hiding (nil, null)
+    import Data.Map
 
-    --currently, "(a (b c))" works but "((b c) d)" does not
+    {- 
+        the environment of the interpreted program is stored here. Each "Name" refers to a variable, and each Maybe Expr represents it's value, or lack thereof.
+
+        Given the pair ("x", Nothing) we know that x is a bounded variable. 
+        This means that x was defined by a lambda function, and thus cannot be changed.
+
+        Given the pair ("f", Just F) we know that the function f is defined as the expression F. 
+        Keep in mind that this definition of F cannot contain f, as this would be self-referential.
+        We cannot have self-referential functions, because a function being defined is not yet apart of
+        our environment.
+    -}
+    type Env = Map Name (Maybe Expr)
 
     parse :: String -> Expr
     parse = fromJust . parseM
@@ -98,6 +110,12 @@ module LambdaParse where
         whitespaces
         return (Var (x:xs))
 
+    funcn :: Parser Name
+    funcn = do
+        x  <- satisfy (not . isNumber)
+        xs <- many anyChar
+        return (x:xs)
+
     int :: Parser Expr
     int = convert <$> read <$> some (satisfy isDigit) <* whitespaces
 
@@ -107,7 +125,7 @@ module LambdaParse where
         lambdaSym
         whitespaces
         x <- vars
-        (string "->" <|> string ".")
+        lambdaSplit
         whitespaces
         y <- exprs
         string ")"
@@ -121,10 +139,16 @@ module LambdaParse where
     lambdaSym :: Parser String
     lambdaSym = string "l" <|> string "\\"
 
+    lambdaSplit :: Parser String
+    lambdaSplit = string "->" <|> string "."
+
     define :: Parser (Name, Expr)
     define = do
-        x <- varn
+        x <- funcn
         string ":="
         y <- expr
+        char "\n"
         return (x, y)
 
+    spaces :: Parser String
+    spaces = many (char " " <|> char "\t")
