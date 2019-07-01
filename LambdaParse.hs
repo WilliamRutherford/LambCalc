@@ -25,7 +25,7 @@ module LambdaParse where
     parseFile :: String -> Env
     parseFile = fromJust . parseFileM
         where
-        fromJust Nothing  = error "Error reading file"
+        fromJust Nothing  = error "Error reading file using parseFile"
         fromJust (Just a) = a
 
     readLambdaFile :: String -> IO Env
@@ -41,7 +41,9 @@ module LambdaParse where
     fileParser = do
         whitespaces
         x <- some define
-        return $ fromList $ Data.List.map (\(a,b) -> (a, Just b)) x
+        eof
+        return $ Data.Map.fromList x
+
 
     termParser :: Parser Expr
     termParser = do
@@ -107,10 +109,13 @@ module LambdaParse where
 
     varn :: Parser Name
     varn = do
-        x  <- satisfy (not . isNumber)
-        xs <- many anyChar
+        x  <- satisfy (\x -> not $ isNumber x || x `elem` ['\n',' ','\t'])
+        xs <- many varChar
         spaces
         return (x:xs)
+
+    varChar :: Parser Char
+    varChar = satisfy (\x -> not $ x `elem` ['\n', ' ', '\t'])
 
     int :: Parser Expr
     int = convert <$> read <$> some (satisfy isDigit) <* spaces
@@ -138,16 +143,14 @@ module LambdaParse where
     lambdaSplit :: Parser String
     lambdaSplit = string "->" <|> string "."
 
-    define :: Parser (Name, Expr)
+    define :: Parser (Name,Maybe Expr)
     define = do
         x <- varn
         string ":="
+        spaces
         y <- expr
-        newLines
-        return (x, y)
+        whitespaces
+        return (x, Just y)
 
     spaces :: Parser String
     spaces = many (satisfy (\x -> x `elem` [' ', '\t']))
-
-    newLines :: Parser String
-    newLines = many (satisfy ('\n' ==))
