@@ -14,18 +14,7 @@ module LambdaParse where
     import Data.List hiding (nil, null)
     import Data.Map
 
-    {- 
-        the environment of the interpreted program is stored here. Each "Name" refers to a variable, and each Maybe Expr represents it's value, or lack thereof.
-
-        Given the pair ("x", Nothing) we know that x is a bounded variable. 
-        This means that x was defined by a lambda function, and thus cannot be changed.
-
-        Given the pair ("f", Just F) we know that the function f is defined as the expression F. 
-        Keep in mind that this definition of F cannot contain f, as this would be self-referential.
-        We cannot have self-referential functions, because a function being defined is not yet apart of
-        our environment.
-    -}
-    type Env = Map Name (Maybe Expr)
+    type Env = Map (Name) (Maybe Expr)
 
     parse :: String -> Expr
     parse = fromJust . parseM
@@ -33,26 +22,44 @@ module LambdaParse where
         fromJust Nothing  = error "Error Parsing Term"
         fromJust (Just a) = a
 
+    parseFile :: String -> Env
+    parseFile = fromJust . parseFileM
+        where
+        fromJust Nothing  = error "Error reading file"
+        fromJust (Just a) = a
+
+    readLambdaFile :: String -> IO Env
+    readLambdaFile filename = parseFile <$> readFile filename
+
     parseM :: String -> Maybe Expr
     parseM = runParser termParser
 
+    parseFileM :: String -> Maybe Env
+    parseFileM = runParser fileParser
+
+    fileParser :: Parser Env
+    fileParser = do
+        whitespaces
+        x <- some define
+        return $ fromList $ Data.List.map (\(a,b) -> (a, Just b)) x
+
     termParser :: Parser Expr
     termParser = do
-        whitespaces
+        spaces
         t <- exprs
         eof
         return t
 
     expr :: Parser Expr
-    expr = int <|> var <|> lpair <|> larr <|> emptyArr <|> bexprs <|> lambda <* whitespaces
+    expr = int <|> var <|> lpair <|> larr <|> emptyArr <|> bexprs <|> lambda <* spaces
 
     bexprs :: Parser Expr
     bexprs = do
         char '('
-        whitespaces
+        spaces
         x <- some expr
         char ')'
-        whitespaces
+        spaces
         return (expandExprs x)
 
     exprs :: Parser Expr
@@ -67,69 +74,58 @@ module LambdaParse where
     lpair :: Parser Expr
     lpair = do
         char '('
-        whitespaces
+        spaces
         x <- expr
         char ','
-        whitespaces
+        spaces
         y <- expr
         char ')'
-        whitespaces
+        spaces
         return (pair x y)
 
     emptyArr :: Parser Expr
     emptyArr = do
-        a <- string "[]" 
-        b <- whitespaces
+        string "[]" 
+        spaces
         return nil
     
     larr :: Parser Expr
     larr = do
         char '['
-        whitespaces
+        spaces
         x  <- expr
-        xs <- many (char ',' *> whitespaces *> expr)
+        xs <- many (char ',' *> spaces *> expr)
         char ']'
+        spaces
         return (arr (x:xs))
     
     vars :: Parser [Name]
     vars = some varn
 
---can var and varn be combined?
+    var :: Parser Expr
+    var = fmap Var varn
 
     varn :: Parser Name
     varn = do
-        x <- satisfy isAlpha
-        xs <- many (satisfy isAlphaNum)
-        whitespaces
-        return (x:xs)
-
-    var :: Parser Expr
-    var = do
-        x  <-        satisfy isAlpha
-        xs <- many  (satisfy isAlphaNum)
-        whitespaces
-        return (Var (x:xs))
-
-    funcn :: Parser Name
-    funcn = do
         x  <- satisfy (not . isNumber)
         xs <- many anyChar
+        spaces
         return (x:xs)
 
     int :: Parser Expr
-    int = convert <$> read <$> some (satisfy isDigit) <* whitespaces
+    int = convert <$> read <$> some (satisfy isDigit) <* spaces
 
     lambda ::  Parser Expr
     lambda = do
         string "("
         lambdaSym
-        whitespaces
+        spaces
         x <- vars
         lambdaSplit
-        whitespaces
+        spaces
         y <- exprs
         string ")"
-        whitespaces
+        spaces
         return (expandLambda x y)
 
     expandLambda :: [Name] -> Expr -> Expr
@@ -144,11 +140,14 @@ module LambdaParse where
 
     define :: Parser (Name, Expr)
     define = do
-        x <- funcn
+        x <- varn
         string ":="
         y <- expr
-        char "\n"
+        newLines
         return (x, y)
 
     spaces :: Parser String
-    spaces = many (char " " <|> char "\t")
+    spaces = many (satisfy (\x -> x `elem` [' ', '\t']))
+
+    newLines :: Parser String
+    newLines = many (satisfy ('\n' ==))

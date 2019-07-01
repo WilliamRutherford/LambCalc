@@ -3,7 +3,9 @@ module LambdaCalc where
     --import LambdaParse   
     import LambdaExpr
     import Data.List hiding (nil, null)
-    --import Data.Hash
+    import Data.Map
+
+    type Env = Map Name (Maybe Expr)
 
     --constants types
     true :: Expr
@@ -29,7 +31,7 @@ module LambdaCalc where
 
     --makes sure that lambda variables don't overlap
     apply :: Expr -> Expr -> Expr
-    apply x y = applyh x (if overlapped == [] then y else foldr (\a b -> subName b a (a++"_")) y overlapped)
+    apply x y = applyh x (if overlapped == [] then y else Data.List.foldr (\a b -> subName b a (a++"_")) y overlapped)
         where overlapped = overlap x y
     --x, y :: Expr
     --(\a b ->) :: a -> b -> b (b is Expr)
@@ -55,7 +57,7 @@ module LambdaCalc where
     subName (App x y)    q r = App (subName x q r) (subName y q r)
 
     overlap :: Expr -> Expr -> [Name]
-    overlap x y = filter (\a -> a `elem`listVars y) (listVars x)
+    overlap x y = Data.List.filter (\a -> a `elem`listVars y) (listVars x)
 
     listVars :: Expr -> [Name]
     listVars (Var a) = [a]
